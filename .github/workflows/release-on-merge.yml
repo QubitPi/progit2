@@ -2,7 +2,7 @@ name: Release on push to main
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   release:
@@ -28,6 +28,19 @@ jobs:
 
     - name: Build release assets
       run: bundle exec rake book:build
+
+    - name: Prepare for deployment to GitHub Pages
+      run: |
+        mkdir gh-pages-content
+        mv progit.html gh-pages-content/index.html
+
+    - name: Deploy HTML book to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: gh-pages-content
+        user_name: QubitPi
+        user_email: jack20191124@proton.me
 
     - name: Create release
       uses: ncipollo/release-action@v1
